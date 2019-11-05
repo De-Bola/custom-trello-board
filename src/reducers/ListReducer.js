@@ -15,8 +15,8 @@ const initState = [
     ]
     },
     {
-        title: "Reults",
-        id: 0,
+        title: "Results",
+        id: 1,
         cards: [
             {
             id: 0,
