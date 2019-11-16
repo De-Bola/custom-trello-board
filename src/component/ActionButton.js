@@ -122,7 +122,7 @@ class ActionButton extends React.Component {
                 <Icon style={{
                     marginLeft: 8,
                     cursor: 'pointer'
-                }}>close</Icon>
+                }} onClick={this.closeForm}>close</Icon>
             </div>
         </div>
     };

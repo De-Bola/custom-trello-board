@@ -1,6 +1,6 @@
 import { CONSTANTS } from '../actions'
 
-let listID = 2;
+var listID = 2;
 let cardID = 6;
 const initState = [
     {
@@ -51,7 +51,7 @@ const ListsReducer = (state = initState, action) => {
             }
             listID += 1;
             return [...state, newList];
-        case CONSTANTS.ADD_CARD:
+        case CONSTANTS.ADD_CARD: {
             const newCard = {
                 text: action.payload.text,
                 id: `card-${cardID}`
@@ -68,6 +68,62 @@ const ListsReducer = (state = initState, action) => {
                 }
             });
             return newState;
+        }
+        case CONSTANTS.DRAG_HAPPENED: {
+            const {
+                droppableIdStart, droppableIdEnd, droppableIndexStart, droppableIndexEnd, type
+            } = action.payload;
+            const newState = [...state];
+
+            //for list drags
+            if (type === 'list') {
+                const list = newState.splice(droppableIndexStart, 1);
+                newState.splice(droppableIndexEnd, 0, ...list);
+                return newState;
+            }
+
+            //check if cards are in same list
+            if (droppableIdStart === droppableIdEnd) {
+                const list = state.find(list => droppableIdStart === list.id);
+                const card = list.cards.splice(droppableIndexStart, 1)
+                list.cards.splice(droppableIndexEnd, 0, ...card)
+            }
+            //when cards aren't from same list
+            if (droppableIdStart !== droppableIdEnd) {
+                //find list where drag happened
+                const listStart = state.find(list => droppableIdStart === list.id)
+
+                //take card out of that list
+                const card = listStart.cards.splice(droppableIndexStart, 1);
+
+                //find list where drag ends
+                const listEnd = state.find(list => droppableIdEnd === list.id);
+
+                //drop card in new list
+                listEnd.cards.splice(droppableIndexEnd, 0, ...card);
+
+                ///a good feature additional feature is to be able to drag-n-drop a chain of cards.
+            }
+            return newState;
+        }
+        case CONSTANTS.DELETE_LIST:
+
+            {
+                const listId = action.payload;
+
+                state.splice(listId, 1);
+
+                return [...state];
+            }
+
+        case CONSTANTS.DELETE_CARD:
+
+            const {cardId, listId} = action.payload;
+
+            //var list = 
+            state.splice(cardId, 1);
+
+            return [...state];
         default:
             return state;
     }
